@@ -40,9 +40,9 @@ flowchart LR
 | Setting | Aggregation | Classifier | AUROC | MCC |
 |---|---|---|---|---|
 | **val_outside** | MiniRocket | k-NN | **0.926** | **0.753** |
-| val_outside | Global Pool | k-NN | 0.515 | — |
+| val_outside | Global Pool | k-NN | 0.515 | 0.148 |
 | **test_outside** | Global Pool | LightGBM | — | **0.932** |
-| val_overlapped | Global Pool | k-NN | 0.987 | — |
+| test_outside | MiniRocket | k-NN | — | 0.798 |
 
 > **MiniRocket preserves local cassette-scale ordering** — critical for plasmid/integron resistance mechanisms. Global pooling remains competitive for chromosomal/diffuse resistance. Aggregation choice is mechanism-dependent.
 
