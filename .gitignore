@@ -1,0 +1,160 @@
+# Python
+__pycache__/
+*.py[cod]
+*$py.class
+*.so
+.Python
+build/
+develop-eggs/
+dist/
+downloads/
+eggs/
+.eggs/
+lib/
+lib64/
+parts/
+sdist/
+var/
+wheels/
+share/python-wheels/
+*.egg-info/
+.installed.cfg
+*.egg
+MANIFEST
+
+# PyTorch
+*.pt
+*.pth
+*.safetensors
+
+# Data files
+*.csv
+!examples/**/*.csv
+*.h5
+*.hdf5
+*.npz
+*.npy
+/data/
+/datasets/
+*.fna.gz
+*.fasta.gz
+
+# Results and outputs
+results/
+output/
+logs/
+cache/
+/embeddings/
+processed_embedding/
+
+# Model checkpoints and weights (keep model structure but not weights)
+# Note: Large weight files should be downloaded separately or stored with Git LFS
+models/*/model-*.safetensors
+models/*/pytorch_model.pt
+models/*/model.safetensors.index.json
+models/*/layer_*.pt
+
+# Keep small config files and model code
+!models/*/config.json
+!models/*/generation_config.json
+!models/*/*.py
+!models/*/README.md
+
+# SLURM logs
+*.out
+*.err
+slurm-*.out
+
+# Jupyter notebooks
+.ipynb_checkpoints/
+*.ipynb
+
+# Environment files
+.env
+.venv
+env/
+venv/
+ENV/
+env.bak/
+venv.bak/
+
+# IDE
+.vscode/
+.idea/
+*.swp
+*.swo
+*~
+
+# OS
+.DS_Store
+.DS_Store?
+._*
+.Spotlight-V100
+.Trashes
+ehthumbs.db
+Thumbs.db
+
+# Temporary files
+tmp/
+temp/
+temp_trash/
+*.tmp
+*.temp
+
+# Configuration overrides (keep templates)
+config/local_*.yaml
+config/*_local.yaml
+
+# Large files
+*.tar.gz
+*.zip
+*.rar
+
+# Diagnostic outputs
+diagnostics/results/
+*.png
+*.pdf
+!docs/cross_species_amr_prediction_thesis.pdf
+*.json
+!configs/**/*.json
+*.joblib
+
+# MiniRocket outputs
+minirocket/output/
+minirocket/results/
+minirocket/**/trash/
+catboost_info/
+
+# Flash attention builds
+flash_attn/
+csrc/
+ninja_build/
+build_cuda/
+
+# Local test artifacts
+.pytest_cache/
+.coverage
+htmlcov/
+coverage.xml
+
+# evo-hidden is a separate GitHub repo — never track here
+evo-hidden/
+
+# amr_pred — track source code, exclude data/credentials/artifacts
+# (negate the generic lib/ rule for amr_pred's source library)
+!prediction/lib/
+prediction/.git/
+prediction/data/
+prediction/backup_data*/
+prediction/envs/*.env
+prediction/create_env.log
+prediction/install_log.txt
+prediction/debug.txt
+prediction/figures/
+prediction/testtt/
+prediction/debug/
+prediction/misc/
+
+# AMR_benchmarking — track source code, exclude raw genome data
+benchmarking/.git/
+benchmarking/data/

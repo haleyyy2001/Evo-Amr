@@ -1,0 +1,33 @@
+experiment:
+  name: tiny_demo_evo_minirocket
+  task: binary_amr_prediction
+  antibiotic: ampicillin
+  evaluation: species_holdout
+
+dataset:
+  manifest: examples/tiny_manifest.csv
+  restricted: false
+
+representation:
+  model: evo-1-8k-base
+  extraction_layer: 10
+  input_kind: fake_embeddings
+
+aggregation:
+  methods:
+    - mean_pooling
+    - minirocket
+
+models:
+  classifiers:
+    - logistic_regression
+    - knn_cosine
+
+metrics:
+  - auroc
+  - auprc
+  - f1
+  - mcc
+
+outputs:
+  run_dir: examples/fake_run_outputs/tiny_demo_evo_minirocket

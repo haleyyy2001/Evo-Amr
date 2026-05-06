@@ -1,0 +1,19 @@
+profile: server
+
+paths:
+  project_root: "/path/to/Evo-Amr"
+  data_root: "/path/to/amr/data"
+  artifact_root: "/path/to/amr/results"
+  cache_root: "/path/to/amr/cache"
+  sequence_root: "/path/to/sequences/raw/nucleotide"
+  phenotype_root: "/path/to/phenotypes"
+  embedding_root: "/path/to/embeddings"
+
+compute:
+  scheduler: slurm
+  account: "pmg"
+  default_partition: "gpu"
+
+notes:
+  - "This is a template for HPC/server profiles."
+  - "Real cluster paths should stay in ignored local profile files."

@@ -1,0 +1,46 @@
+experiment:
+  name: ampicillin_mechanism_neighbor_audit
+  task: mechanism_analysis
+  antibiotic: ampicillin
+  evaluation: species_level_neighbor_audit
+
+dataset:
+  manifest: "${artifact_root}/manifests/bvbrc_multi_drug_aug2024.csv"
+  split_design: clustered_3_v1
+  restricted: true
+
+representation:
+  model: evo-1-8k-base
+  extraction_layer: 10
+  dtype: bfloat16
+  output: "${embedding_root}/evo_l10/ampicillin"
+
+aggregation:
+  methods:
+    - global_pooling
+    - minirocket
+
+neighbor_audit:
+  k: 20
+  distance: cosine
+  compare:
+    - species_match
+    - phenotype_match
+    - neighbor_species_distribution
+    - minirocket_minus_global_pooling_delta
+
+mechanism_regimes:
+  cassette_mediated:
+    preferred_aggregation: minirocket
+  chromosomal_diffuse:
+    preferred_aggregation: global_pooling
+  mixed_or_unknown:
+    preferred_aggregation: ensemble_or_compare
+
+metrics:
+  - accuracy
+  - mcc
+
+outputs:
+  run_dir: "${artifact_root}/analysis/ampicillin_neighbor_audit"
+  report: "${artifact_root}/reports/ampicillin_mechanism_neighbor_audit.md"

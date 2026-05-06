@@ -1,0 +1,45 @@
+experiment:
+  name: kover_species_holdout_six_antibiotics
+  task: classical_baseline_benchmark
+  evaluation: species_holdout
+
+baseline:
+  name: kover
+  backend: external/AMR_benchmarking
+  mode: species_holdout
+
+dataset:
+  manifest: "${artifact_root}/manifests/bvbrc_multi_drug_aug2024.csv"
+  split_design: clustered_3_v1
+  restricted: true
+
+antibiotics:
+  - ciprofloxacin
+  - gentamicin
+  - tetracycline
+  - ampicillin
+  - erythromycin
+  - tigecycline
+
+partitions:
+  - train
+  - val_overlapped
+  - val_outside
+  - test_overlapped
+  - test_outside
+
+kover:
+  kmer_size: 31
+  model_type: scm
+  tune_on: val_outside
+  replicates: ["v1-1", "v1-2", "v1-3"]
+
+metrics:
+  - f1
+  - auroc
+  - auprc
+  - mcc
+
+outputs:
+  run_dir: "${artifact_root}/baselines/kover_species_holdout_six_drugs"
+  report: "${artifact_root}/reports/kover_species_holdout_six_drugs.md"

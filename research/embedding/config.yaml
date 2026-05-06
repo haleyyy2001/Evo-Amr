@@ -1,0 +1,73 @@
+# Evo-1-8K Configuration File
+# Fill in the paths specific to your environment
+
+# Data paths - customize these for your setup
+CENTRAL_CONTIGS: "/path/to/your/sequences/raw/nucleotide"  # Directory containing genome FASTA files
+LOCAL_GENOME_DIR: "/path/to/your/genomes"  # Local genome directory (optional)
+EMBEDDINGS_DIR: "/path/to/your/embeddings_output"  # Where to save H5 embedding files
+CSV_FILE: "/path/to/your/genome_list.csv"  # CSV file with genome IDs
+
+# Model paths - these are relative to the script location
+MODEL_CONFIG_PATH: "../evo/evo_1_131k_base/config.json"  # Model config file
+MODEL_WEIGHTS_PATH: "../evo/evo-1-8k-base"  # Directory with model weights  
+CUSTOM_MODEL_PATH: "."  # Path to custom model code (current directory)
+
+# Processing parameters - adjust based on your hardware
+CHUNK_SIZE: 4000
+MAX_TOKENS: 4000
+BATCH_SIZE: 8
+GENOMES_PER_GPU_BATCH: 10
+NUM_GPUS: 0  # 0 = auto-detect
+
+# Threading for tokenization
+TOKENIZER_THREADS: 4
+TOKENIZER_QUEUE_SIZE: 20
+
+# Memory settings - adjust based on your GPU memory
+MIN_FREE_MEMORY_GB: 6.0
+MEMORY_FRACTION: 0.92
+MAX_GENOME_SIZE_MB: 1200
+
+# System settings
+MAX_RETRIES: 3
+CLEANUP_INTERVAL: 1
+SEQUENTIAL_MODE: false
+MEMORY_DEBUG: false
+STORAGE_DEBUG: false
+
+# Optimization settings
+USE_MIXED_PRECISION: true
+USE_BFLOAT16: true
+USE_CUDA_GRAPHS: false
+USE_STATEFUL: false
+EXTRACT_LAYER: 16
+USE_ASYNC_WRITER: true
+USE_DUAL_STREAMS: true
+AUTO_TUNE_BATCH: true
+COMPRESSION: "lzf"
+COMPRESSION_LEVEL: null
+BLOCK_SIZE: 4000
+
+# Diagnostic flags
+NO_MASK_TEST: false
+EDGE_REPEAT_PAD: false
+LOG_UNIQUE_IDS: false
+USE_FP32: false
+
+# Normalization settings
+RAW_EMBEDDINGS: true
+NORMALIZE_EMBEDDINGS: false
+CLIP_MIN: -10.0
+CLIP_MAX: 10.0
+LAYER_NORM_EPS: 1e-5
+MAX_NORM: 10.0
+
+# Precision and checksum
+USE_FLOAT16_STORAGE: false
+USE_FLETCHER32: false
+USE_SHUFFLE: true
+
+# Extraction & postprocessing flags
+EXTRACT_FINAL: false
+TOKEN_NORM: "l2"  # "none" | "l2" | "ln"
+POOL: "none"  # "none" | "mean" | "max" | "meanmax"

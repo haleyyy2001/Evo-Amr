@@ -1,0 +1,6 @@
+genome_id,species,antibiotic,phenotype,partition_label,sequence_path,embedding_path,source_dataset,split_design
+G001,Escherichia_coli,ampicillin,1,train,data/sequences/G001.fna.gz,data/embeddings/G001.h5,tiny_demo,species_holdout_demo
+G002,Escherichia_coli,ampicillin,0,train,data/sequences/G002.fna.gz,data/embeddings/G002.h5,tiny_demo,species_holdout_demo
+G003,Klebsiella_pneumoniae,ampicillin,1,val_outside,data/sequences/G003.fna.gz,data/embeddings/G003.h5,tiny_demo,species_holdout_demo
+G004,Klebsiella_pneumoniae,ampicillin,0,test_outside,data/sequences/G004.fna.gz,data/embeddings/G004.h5,tiny_demo,species_holdout_demo
+G005,Escherichia_coli,ampicillin,1,test_overlapped,data/sequences/G005.fna.gz,data/embeddings/G005.h5,tiny_demo,species_holdout_demo

@@ -1,0 +1,61 @@
+# MiniRocket AMR Pipeline Configuration
+# ====================================
+#
+# This file contains all configuration options for the MiniRocket AMR pipeline.
+# Copy this file to 'config.yaml' and modify as needed.
+#
+# Environment variables can override any setting here:
+#   AMR_DATA_DIR, AMR_OUTPUT_DIR, AMR_LABELS_DIR, etc.
+
+# Core directories (relative to pipeline root)
+data_dir: "data/embeddings"          # Directory containing H5 embedding files
+output_dir: "results"                # Base output directory for all results
+labels_dir: "data/labels"            # Directory containing label CSV files
+models_dir: "models"                 # Directory for trained models
+
+# Processing parameters
+projection_dim: 41                   # PCA projection dimensions
+window_size: 2048                    # Window size for MiniRocket
+stride: 1024                         # Stride for sliding windows
+num_kernels: 2000                    # Number of MiniRocket kernels
+max_dilations_per_kernel: 8          # Maximum dilations per kernel
+
+# Training parameters
+max_files: 60                        # Maximum files to process for training
+max_tokens: 20000                    # Maximum tokens per file for training
+batch_size: 131072                   # Batch size for processing
+window_batch: 128                    # Window batch size
+
+# Pipeline options
+run_tracks:                          # Which tracks to run
+  - "baseline"                       # PCA baseline
+  - "minirocket"                     # MiniRocket pipeline
+skip_mil: false                      # Skip Multiple Instance Learning
+tune_on_val_outside: true           # Use validation set for hyperparameter tuning
+use_zscore: true                     # Apply z-score normalization
+shuffle: true                        # Shuffle training data
+cover_tail: true                     # Cover tail of sequences
+
+# File patterns
+embedding_patterns:                  # Patterns for embedding files
+  - "*.h5"
+  - "*.hdf5"
+label_pattern: "*_kover.csv"         # Pattern for label files
+
+# Logging and output
+log_level: "INFO"                    # Logging level (DEBUG, INFO, WARNING, ERROR)
+save_pca_stats: true                 # Save PCA statistics
+
+# Example usage scenarios:
+#
+# 1. Basic usage with default paths:
+#    python pipeline.py --config config.yaml
+#
+# 2. Override data directory:
+#    AMR_DATA_DIR=/path/to/embeddings python pipeline.py
+#
+# 3. Custom configuration:
+#    python pipeline.py --config /path/to/custom/config.yaml
+#
+# 4. Run only MiniRocket:
+#    AMR_RUN_TRACKS=minirocket python pipeline.py

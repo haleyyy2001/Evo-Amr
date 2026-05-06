@@ -1,0 +1,14 @@
+profile: local
+
+paths:
+  project_root: "."
+  data_root: "./data"
+  artifact_root: "./results"
+  cache_root: "./cache"
+  sequence_root: "./data/sequences"
+  phenotype_root: "./data/phenotypes"
+  embedding_root: "./data/embeddings"
+
+notes:
+  - "Copy to configs/paths/local.yaml for machine-specific paths."
+  - "Do not commit private data paths or restricted dataset locations."

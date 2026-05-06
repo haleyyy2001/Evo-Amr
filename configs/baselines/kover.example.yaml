@@ -1,0 +1,17 @@
+baseline:
+  name: kover
+  backend: external/AMR_benchmarking
+  mode: species_holdout
+
+inputs:
+  manifest: "${artifact_root}/manifests/bvbrc_multi_drug_aug2024.csv"
+  phenotype_column: ampicillin
+  split_column: partition_label
+
+outputs:
+  run_dir: "${artifact_root}/baselines/kover/ampicillin"
+
+execution:
+  adapter: shell
+  script: "scripts/model/kover.sh"
+  dry_run_default: true

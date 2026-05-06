@@ -1,0 +1,29 @@
+experiment:
+  name: evo_layer_diagnostics_bf16
+  task: representation_diagnostics
+  evaluation: layer_stability
+
+dataset:
+  manifest: "${artifact_root}/manifests/diagnostic_sequences_ampicillin.csv"
+  restricted: true
+
+representation:
+  model: evo-1-8k-base
+  dtype: bfloat16
+  layers: [0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11]
+  recommended_layer: 10
+  stability_boundary: 11
+
+diagnostics:
+  metrics:
+    - activation_scale
+    - isotropy
+    - effective_rank
+    - singular_spectrum
+    - token_norm_concentration
+    - cross_seed_stability
+  seeds: 10
+
+outputs:
+  run_dir: "${artifact_root}/diagnostics/evo_layer_stability"
+  report: "${artifact_root}/reports/evo_layer_diagnostics.md"

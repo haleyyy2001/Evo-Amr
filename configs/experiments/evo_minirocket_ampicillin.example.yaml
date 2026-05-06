@@ -1,0 +1,53 @@
+experiment:
+  name: evo_l10_minirocket_ampicillin_species_holdout
+  task: binary_amr_prediction
+  antibiotic: ampicillin
+  evaluation: species_holdout
+
+dataset:
+  config: configs/datasets/bvbrc_multi_drug.example.yaml
+  manifest: "${artifact_root}/manifests/bvbrc_multi_drug_aug2024.csv"
+  split_design: clustered_3_v1
+  partitions:
+    train: train
+    validation_outside: val_outside
+    validation_overlapped: val_overlapped
+    test_outside: test_outside
+    test_overlapped: test_overlapped
+
+representation:
+  model: evo-1-8k-base
+  extraction_layer: 10
+  dtype: bfloat16
+  window_size: 8192
+  output: "${embedding_root}/evo_l10/ampicillin"
+
+aggregation:
+  methods:
+    - mean_pooling
+    - pca
+    - sparse_random_projection
+    - minirocket
+  minirocket:
+    window_size: 2048
+    stride: 1024
+    num_kernels: 2000
+
+models:
+  classifiers:
+    - logistic_regression
+    - linear_svm
+    - random_forest
+    - lightgbm
+    - knn_cosine
+
+metrics:
+  - auroc
+  - auprc
+  - f1
+  - mcc
+  - balanced_accuracy
+
+outputs:
+  run_dir: "${artifact_root}/experiments/evo_l10_minirocket_ampicillin"
+  report: "${artifact_root}/reports/evo_l10_minirocket_ampicillin.md"

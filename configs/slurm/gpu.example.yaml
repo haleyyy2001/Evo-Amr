@@ -1,0 +1,9 @@
+slurm:
+  account: "pmg"
+  partition: "gpu"
+  time: "24:00:00"
+  cpus_per_task: 8
+  mem: "64G"
+  gpus_per_node: 1
+  output: "logs/%x-%j.out"
+  error: "logs/%x-%j.err"

@@ -1,0 +1,16 @@
+baseline:
+  name: resfinder
+  backend: external/AMR_benchmarking
+  mode: determinant_database
+
+inputs:
+  manifest: "${artifact_root}/manifests/bvbrc_multi_drug_aug2024.csv"
+  sequence_column: sequence_path
+
+outputs:
+  run_dir: "${artifact_root}/baselines/resfinder"
+
+execution:
+  adapter: shell
+  script: "scripts/model/resfinder.sh"
+  dry_run_default: true

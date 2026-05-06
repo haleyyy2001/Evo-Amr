@@ -1,0 +1,45 @@
+# Evo-AMR Environment Configuration
+# This file defines environment-specific settings
+
+# Python environment settings
+python:
+  version: "3.11"
+  conda_env: "evo-amr"
+  
+# CUDA settings
+cuda:
+  visible_devices: "auto"  # Set to specific GPU IDs if needed, e.g., "0,1,2"
+  memory_fraction: 0.95
+  
+# Model settings
+model:
+  default_dtype: "bfloat16"
+  use_flash_attention: true
+  use_flashfft: false
+  chunk_size: 2048
+  batch_size:
+    fp32: 2
+    mixed: 8
+    
+# Cache settings
+cache:
+  max_size: 10737418240  # 10GB in bytes
+  cleanup_threshold: 0.8
+  
+# Diagnostic settings
+diagnostics:
+  num_seeds: 10
+  save_hidden_states: true
+  topk_analysis: 20
+  
+# Performance settings
+performance:
+  num_workers: 8
+  pin_memory: true
+  persistent_workers: true
+  
+# Logging settings
+logging:
+  level: "INFO"
+  format: "[%(asctime)s] %(levelname)s: %(message)s"
+  file_rotation: "1GB"

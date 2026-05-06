@@ -1,0 +1,69 @@
+# Results and Output Files
+results/
+output/
+logs/
+*.log
+*.out
+*.err
+
+# Data Files (should be configured via config.yaml)
+data/
+embeddings/
+processed_embedding/
+processed_features/
+
+# Model Files
+models/
+*.npz
+*.joblib
+*.pkl
+*.h5
+*.hdf5
+
+# Analysis Results
+knn_results/
+visualization/knn_neighbor_analysis_back/
+visualization/method_comparison_results/
+*_summary_*.txt
+*_analysis_*.json
+*_comparative_*.txt
+
+# Timestamped Files
+*_202*
+*_[0-9][0-9][0-9][0-9][0-9][0-9]_*
+
+# Temporary Files
+tmp/
+temp/
+__pycache__/
+*.pyc
+*.pyo
+.DS_Store
+.ipynb_checkpoints/
+
+# Environment and IDE
+.env
+.vscode/
+.idea/
+*.swp
+*.swo
+
+# User-specific Configuration
+config.yaml
+config.json
+local_config.*
+
+# Plots and Figures
+*.png
+*.pdf
+*.svg
+*.jpg
+*.jpeg
+
+# CSV Data Files (results)
+*.csv
+
+# Backup Directories
+*_backup/
+*_bak/
+backup_*/

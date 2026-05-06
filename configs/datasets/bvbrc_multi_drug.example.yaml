@@ -1,0 +1,21 @@
+dataset:
+  name: bvbrc_multi_drug
+  version: aug2024
+  source: "BV-BRC/PATRIC antimicrobial susceptibility metadata"
+  restricted: true
+
+schema:
+  genome_id: genome_id
+  species: gtdb_species
+  sequence_path: sequence_path
+  phenotype_columns: "one column per antibiotic"
+
+filters:
+  min_species_per_antibiotic: 5
+  min_samples_per_partition: 25
+  phenotype_values:
+    resistant: [1, "R", "resistant"]
+    sensitive: [0, "S", "susceptible"]
+
+outputs:
+  manifest: "${artifact_root}/manifests/bvbrc_multi_drug_aug2024.csv"

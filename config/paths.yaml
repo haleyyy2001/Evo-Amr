@@ -1,0 +1,49 @@
+# Evo-AMR Path Configuration
+# This file manages all paths used in the pipeline to make it directory-agnostic
+
+# Base directories - adjust these for your environment
+base_dir: "/path/to/your/evo_amr"  # Change this to your installation directory
+data_dir: "/path/to/your/data"     # Change this to your data directory
+
+# Model paths (relative to base_dir)
+models:
+  evo_1_131k_base: "models/evo_1_131k_base"
+  evo_1_8k_base: "models/evo-1-8k-base"      # Model weights used in diagnostics
+  evo_8: "models/evo_8"
+  
+# Data paths
+data:
+  sequences: "${data_dir}/sequences/raw/nucleotide"
+  kover_input: "${data_dir}/kover_input"
+  processed_embedding: "${data_dir}/processed_embedding"
+  
+# Output paths (relative to base_dir)
+output:
+  results: "results"
+  logs: "logs"
+  diagnostics: "diagnostics/results"
+  embeddings: "embeddings"
+  
+# Cache directories (relative to base_dir)
+cache:
+  root: "cache"
+  hf: "cache/hf"
+  torch: "cache/torch"
+  triton: "cache/triton"
+  flashattn: "cache/flashattn"
+  
+# Pipeline-specific paths
+pipelines:
+  embedding:
+    config: "embedding_pipeline/config.yaml"
+    output: "embedding_pipeline/output"
+  minirocket:
+    output: "minirocket/output"
+  srp:
+    output: "srp/output"
+    
+# SLURM job settings
+slurm:
+  partition: "gpu"
+  account: "pmg"  # Change this to your SLURM account
+  log_dir: "logs"
