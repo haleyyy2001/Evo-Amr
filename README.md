@@ -41,8 +41,8 @@ flowchart LR
 |---|---|---|---|---|
 | **val_outside** | MiniRocket | k-NN | **0.926** | **0.753** |
 | val_outside | Global Pool | k-NN | 0.515 | 0.148 |
-| **test_outside** | Global Pool | LightGBM | — | **0.932** |
-| test_outside | MiniRocket | k-NN | — | 0.798 |
+| **test_outside** | Global Pool | LightGBM | — | **0.997** |
+| test_outside | MiniRocket | k-NN | — | 0.956 |
 
 > **MiniRocket preserves local cassette-scale ordering** — critical for plasmid/integron resistance mechanisms. Global pooling remains competitive for chromosomal/diffuse resistance. Aggregation choice is mechanism-dependent.
 
