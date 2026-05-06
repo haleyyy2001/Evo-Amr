@@ -35,7 +35,7 @@ This is an out-of-distribution generalization problem. Standard random splits ca
 The thesis reports experiments across 3,388 genomes from 126 species for ampicillin resistance.
 
 - On `val_outside`, MiniRocket k-NN achieved MCC 0.753, compared with Global Pooling k-NN MCC 0.148.
-- On `test_outside`, Global Pooling with LightGBM achieved MCC 0.932, while MiniRocket achieved MCC 0.798.
+- On `test_outside`, Global Pooling with LightGBM achieved MCC 0.997, while MiniRocket achieved MCC 0.956.
 - For k-NN on `val_outside`, MiniRocket increased AUROC from 0.515 to 0.926.
 
 These split-level differences motivated species-level analysis. MiniRocket performed best when local, horizontally transferable resistance elements were likely to dominate. Global Pooling performed better when broad chromosomal background was more informative.

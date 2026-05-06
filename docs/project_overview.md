@@ -149,8 +149,8 @@ Key hyperparameters: window size 2048 tokens, stride 1024 tokens, 2,000 kernels.
 | --- | --- | --- | --- | --- |
 | val_outside | k-NN cosine | MiniRocket | 0.926 | 0.753 |
 | val_outside | k-NN cosine | Global pooling | 0.515 | 0.148 |
-| test_outside | LightGBM | Global pooling | — | 0.932 |
-| test_outside | k-NN cosine | MiniRocket | — | 0.798 |
+| test_outside | LightGBM | Global pooling | — | 0.997 |
+| test_outside | k-NN cosine | MiniRocket | — | 0.956 |
 
 The split-level divergence reflects mechanism dependency. The val_outside species are predominantly affected by cassette-mediated resistance (MiniRocket excels). The test_outside species include more chromosomal/diffuse mechanisms (global pooling recovers).
 
