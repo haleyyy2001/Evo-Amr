@@ -8,8 +8,8 @@ long_description = (this_directory / "README.md").read_text(encoding="utf-8")
 
 
 def get_version():
-    """Read the package version from the repository package marker."""
-    with open(this_directory / "__init__.py", encoding="utf-8") as f:
+    """Read the package version from src/evo_amr/__init__.py."""
+    with open(this_directory / "src" / "evo_amr" / "__init__.py", encoding="utf-8") as f:
         for line in f:
             if line.startswith("__version__"):
                 return line.split("=")[1].strip().strip('"').strip("'")
@@ -25,11 +25,8 @@ setup(
     long_description=long_description,
     long_description_content_type="text/markdown",
     url="https://github.com/haleyyy2001/Evo-Amr",
-    packages=(
-        find_packages(where="src")
-        + find_packages(exclude=["tests", "tests.*", "docs", "examples"])
-    ),
-    package_dir={"evo_amr": "src/evo_amr"},
+    packages=find_packages(where="src"),
+    package_dir={"": "src"},
     classifiers=[
         "Development Status :: 3 - Alpha",
         "Intended Audience :: Science/Research",
@@ -85,17 +82,11 @@ setup(
     entry_points={
         "console_scripts": [
             "evo-amr=evo_amr.cli:main",
-            "evo-amr-setup=initial_setup:main",
-            "evo-embed=embedding_pipeline.embedding_generator:main",
-            "evo-minirocket=minirocket.minirocket_pipeline.amr_classification_pipeline:main",
         ],
     },
     include_package_data=True,
     package_data={
-        "config": ["*.yaml"],
-        "embedding_pipeline": ["*.yaml"],
-        "models.evo_enhanced": ["*.yaml"],
-        "minirocket.minirocket_pipeline.examples": ["*.yaml"],
+        "evo_amr": ["*.yaml", "**/*.yaml"],
     },
     zip_safe=False,
 )

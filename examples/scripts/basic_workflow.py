@@ -3,191 +3,110 @@
 Basic Evo-AMR Workflow Example
 =============================
 
-This script demonstrates a complete workflow from genomic sequences
-to AMR predictions using the Evo-AMR pipeline.
+Demonstrates the species-holdout evaluation protocol that is the core
+methodological contribution of this project. Works without GPU or real
+genomic data using the bundled tiny fixture manifest.
 
 Usage:
-    python basic_workflow.py --input sequences.csv --output results/
+    # Run with the bundled demo manifest (no data required):
+    python examples/scripts/basic_workflow.py
 
-Requirements:
-    - Input CSV with columns: sequence_id, sequence, label (optional)
-    - Configured Evo-AMR environment
+    # Run with your own manifest:
+    python examples/scripts/basic_workflow.py --manifest path/to/manifest.csv
+
+The tiny demo shows:
+  1. Manifest loading and schema validation
+  2. Species-leakage checking (the key evaluation safeguard)
+  3. Partition summary (train / val_outside / test_outside split)
+  4. Majority-class baseline evaluation
+  5. Markdown report generation
+
+For full embedding extraction and MiniRocket classification, see:
+  docs/project_overview.md  — methodology
+  embedding_pipeline/       — Evo Layer 10 extraction (requires GPU + data)
+  minirocket/               — MiniRocket downstream pipeline
 """
 
 import argparse
-import logging
+import sys
 from pathlib import Path
-import pandas as pd
-import numpy as np
 
-# Evo-AMR imports
-from config.config_manager import ConfigManager
-from embedding_pipeline.embedding_generator import EmbeddingGenerator
-from minirocket.minirocket_pipeline.core.minirocket_combined_pipeline import MiniRocketPipeline
-from utils.validation import validate_input_file, ValidationError
-from utils.logging import setup_logger
+# Ensure the package is importable when running from the repo root
+repo_root = Path(__file__).resolve().parents[2]
+sys.path.insert(0, str(repo_root / "src"))
+
+from evo_amr.data.manifest import load_manifest, validate_manifest_rows
+from evo_amr.evaluation.metrics import binary_classification_summary
+from evo_amr.models import MajorityClassifier
+from evo_amr.reporting import render_tiny_report
+from evo_amr.splits import outside_species_leakage, summarize_partitions
 
 
-def main():
-    """Main workflow function."""
-    parser = argparse.ArgumentParser(description='Basic Evo-AMR workflow')
-    parser.add_argument('--input', required=True, type=Path,
-                       help='Input CSV file with sequences')
-    parser.add_argument('--output', required=True, type=Path,
-                       help='Output directory for results')
-    parser.add_argument('--model', default='evo-1-8k-base',
-                       help='Model to use for embeddings')
-    parser.add_argument('--limit', type=int,
-                       help='Limit number of sequences (for testing)')
-    parser.add_argument('--verbose', action='store_true',
-                       help='Enable verbose logging')
-    
+DEFAULT_MANIFEST = repo_root / "examples" / "tiny_manifest.csv"
+
+
+def run(manifest_path: Path) -> None:
+    print(f"Loading manifest: {manifest_path}")
+    rows = load_manifest(manifest_path)
+    validate_manifest_rows(rows)
+    print(f"  {len(rows)} genomes loaded and validated\n")
+
+    # Check for species leakage between train and outside partitions.
+    # This is the core safeguard of the species-holdout evaluation design.
+    leakage = outside_species_leakage(rows)
+    if leakage:
+        print(f"WARNING: species leakage detected in outside partitions: {leakage}")
+    else:
+        print("Species leakage check passed — no train species appear in outside partitions\n")
+
+    # Summarise partition sizes.
+    summary = summarize_partitions(rows)
+    print("Partition summary:")
+    for partition, stats in summary.items():
+        print(f"  {partition}: {stats['n_genomes']} genomes, {stats['n_species']} species")
+    print()
+
+    # Majority-class baseline (lower bound — real results use Evo embeddings).
+    labels = [int(row["phenotype"]) for row in rows]
+    predictions = MajorityClassifier().fit(labels).predict(len(labels))
+    metrics = binary_classification_summary(labels, predictions)
+
+    print("Majority-class baseline metrics (lower bound):")
+    for k, v in metrics.items():
+        print(f"  {k}: {v:.3f}" if isinstance(v, float) else f"  {k}: {v}")
+    print()
+
+    # Generate markdown report.
+    report = render_tiny_report(
+        experiment_name="demo_ampicillin_species_holdout",
+        partition_summary=summary,
+        metrics=metrics,
+    )
+    out_path = Path("workflow_demo_report.md")
+    out_path.write_text(report)
+    print(f"Report written to: {out_path}")
+    print("\nDone. To run real experiments, see docs/project_overview.md.")
+
+
+def main() -> int:
+    parser = argparse.ArgumentParser(
+        description="Evo-AMR demo: species-holdout evaluation on a tiny manifest"
+    )
+    parser.add_argument(
+        "--manifest",
+        type=Path,
+        default=DEFAULT_MANIFEST,
+        help=f"Path to manifest CSV (default: {DEFAULT_MANIFEST})",
+    )
     args = parser.parse_args()
-    
-    # Setup logging
-    log_level = logging.DEBUG if args.verbose else logging.INFO
-    logger = setup_logger(__name__, level=log_level)
-    
-    try:
-        # Step 1: Setup configuration
-        logger.info("Setting up configuration...")
-        config = ConfigManager()
-        
-        # Step 2: Validate input
-        logger.info(f"Validating input file: {args.input}")
-        validate_input_file(args.input, 'csv', ['sequence_id', 'sequence'])
-        
-        # Step 3: Load sequences
-        logger.info("Loading sequences...")
-        df = pd.read_csv(args.input)
-        if args.limit:
-            df = df.head(args.limit)
-            logger.info(f"Limited to {len(df)} sequences")
-        
-        sequences = df['sequence'].tolist()
-        sequence_ids = df['sequence_id'].tolist()
-        
-        # Step 4: Generate embeddings
-        logger.info(f"Generating embeddings using {args.model}...")
-        embedding_generator = EmbeddingGenerator(
-            model_name=args.model,
-            config=config
-        )
-        
-        embeddings = embedding_generator.generate_embeddings(
-            sequences=sequences,
-            sequence_ids=sequence_ids,
-            batch_size=8
-        )
-        
-        # Step 5: Save embeddings
-        embeddings_file = args.output / "embeddings.h5"
-        args.output.mkdir(parents=True, exist_ok=True)
-        
-        logger.info(f"Saving embeddings to {embeddings_file}")
-        embedding_generator.save_embeddings(embeddings, embeddings_file)
-        
-        # Step 6: Feature extraction with MiniRocket (if labels available)
-        if 'label' in df.columns:
-            logger.info("Running MiniRocket classification...")
-            
-            # Prepare data for MiniRocket
-            labels = df['label'].values
-            
-            # Initialize MiniRocket pipeline
-            mr_pipeline = MiniRocketPipeline(config=config)
-            
-            # Train MiniRocket features
-            features = mr_pipeline.fit_transform(embeddings)
-            
-            # Train classifier
-            accuracy = mr_pipeline.train_classifier(features, labels)
-            
-            logger.info(f"MiniRocket accuracy: {accuracy:.3f}")
-            
-            # Save results
-            results = {
-                'sequence_id': sequence_ids,
-                'true_label': labels,
-                'prediction': mr_pipeline.predict(features),
-                'accuracy': accuracy
-            }
-            
-            results_df = pd.DataFrame(results)
-            results_file = args.output / "predictions.csv"
-            results_df.to_csv(results_file, index=False)
-            
-            logger.info(f"Results saved to {results_file}")
-        
-        # Step 7: Generate summary report
-        logger.info("Generating summary report...")
-        generate_summary_report(
-            input_file=args.input,
-            output_dir=args.output,
-            num_sequences=len(sequences),
-            model_used=args.model,
-            has_labels='label' in df.columns
-        )
-        
-        logger.info("Workflow completed successfully!")
-        
-    except ValidationError as e:
-        logger.error(f"Validation error: {e}")
+
+    if not args.manifest.exists():
+        print(f"Error: manifest not found at {args.manifest}")
         return 1
-    except Exception as e:
-        logger.error(f"Workflow failed: {e}")
-        return 1
-    
+
+    run(args.manifest)
     return 0
 
 
-def generate_summary_report(input_file: Path, 
-                          output_dir: Path,
-                          num_sequences: int,
-                          model_used: str,
-                          has_labels: bool):
-    """Generate a summary report of the workflow."""
-    
-    report_content = f"""
-# Evo-AMR Workflow Summary
-
-## Input
-- **File**: {input_file}
-- **Sequences processed**: {num_sequences}
-- **Model used**: {model_used}
-
-## Outputs
-- **Embeddings**: {output_dir}/embeddings.h5
-{"- **Predictions**: " + str(output_dir) + "/predictions.csv" if has_labels else ""}
-
-## Processing Steps
-1. ✅ Input validation
-2. ✅ Sequence loading
-3. ✅ Embedding generation
-4. ✅ Feature extraction{"" if not has_labels else " and classification"}
-
-## Files Generated
-"""
-    
-    # List all files in output directory
-    for file_path in output_dir.glob("*"):
-        if file_path.is_file():
-            size_mb = file_path.stat().st_size / (1024 * 1024)
-            report_content += f"- `{file_path.name}` ({size_mb:.2f} MB)\n"
-    
-    report_content += f"""
-## Next Steps
-- View embeddings: Load `embeddings.h5` with h5py or pandas
-{"- Analyze predictions: Check `predictions.csv` for classification results" if has_labels else ""}
-- Advanced analysis: Use embeddings for clustering, visualization, or custom modeling
-
-Generated by Evo-AMR basic workflow
-"""
-    
-    report_file = output_dir / "workflow_summary.md"
-    with open(report_file, 'w') as f:
-        f.write(report_content)
-
-
 if __name__ == "__main__":
-    exit(main())
+    sys.exit(main())
